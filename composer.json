@@ -2,7 +2,7 @@
     "name": "misaf/laravel-email-webhooks-resend",
     "description": "Resend email webhook integration for Laravel.",
     "type": "library",
-    "version": "v1.0.1",
+    "version": "v1.0.0",
     "license": "MIT",
     "keywords": [
         "laravel",
