@@ -36,7 +36,6 @@
             "Misaf\\EmailWebhooksResend\\Tests\\": "tests/"
         }
     },
-    "minimum-stability": "stable",
     "extra": {
         "laravel": {
             "providers": [
