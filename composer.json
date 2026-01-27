@@ -20,7 +20,7 @@
     ],
     "require": {
         "php": "^8.3",
-        "misaf/email-webhooks": "^1.0.0",
+        "misaf/laravel-email-webhooks": "^1.0.0",
         "spatie/laravel-webhook-client": "^3.4.3"
     },
     "require-dev": {
