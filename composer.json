@@ -3,7 +3,7 @@
     "description": "Resend email webhook integration for Laravel.",
     "type": "library",
     "version": "v1.0.1",
-    "license": "proprietary",
+    "license": "MIT",
     "keywords": [
         "laravel",
         "email",
