@@ -15,9 +15,7 @@ final class TestResendEmailEvent extends ResendEvent
      *   subject?: string,
      *   email_id?: string,
      *   created_at?: string,
-     *   original_payload?: array<string, mixed>,
      *   type?: string,
-     *   provider?: string,
      *   bounce?: array{
      *     type?: string,
      *     message?: string,
@@ -27,21 +25,21 @@ final class TestResendEmailEvent extends ResendEvent
      */
     public static function fromArray(array $data): static
     {
-        $bounce = null;
+        $payload = [
+            'data' => [
+                'to'         => $data['to'] ?? ['test@example.com'],
+                'from'       => $data['from'] ?? 'sender@example.com',
+                'subject'    => $data['subject'] ?? 'Test Email',
+                'email_id'   => $data['email_id'] ?? 'test-email-123',
+                'created_at' => $data['created_at'] ?? '2024-01-01T12:00:00Z',
+            ],
+            'type' => $data['type'] ?? 'email.sent',
+        ];
+
         if (isset($data['bounce'])) {
-            $bounce = TestResendBounceEvent::fromArray($data['bounce']);
+            $payload['data']['bounce'] = $data['bounce'];
         }
 
-        return new self(
-            to: $data['to'] ?? ['test@example.com'],
-            from: $data['from'] ?? 'sender@example.com',
-            subject: $data['subject'] ?? 'Test Email',
-            emailId: $data['email_id'] ?? 'test-email-123',
-            createdAt: $data['created_at'] ?? '2024-01-01T12:00:00Z',
-            originalPayload: $data['original_payload'] ?? ['test' => 'data'],
-            type: $data['type'] ?? 'email.sent',
-            provider: $data['provider'] ?? 'test-provider',
-            bounce: $bounce,
-        );
+        return parent::fromArray($payload);
     }
 }

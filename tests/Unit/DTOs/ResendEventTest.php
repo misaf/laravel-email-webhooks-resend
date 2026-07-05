@@ -50,7 +50,7 @@ describe('ResendEvent', function (): void {
             'email_id'   => 'test-email-123',
             'created_at' => '2024-01-01T12:00:00Z',
             'type'       => 'email.bounced',
-            'provider'   => 'test-provider',
+            'provider'   => 'resend',
             'bounce'     => [
                 'type'    => 'Permanent',
                 'message' => 'Test bounce message',
@@ -71,10 +71,10 @@ describe('ResendEvent', function (): void {
 
     it('stores original payload correctly', function (): void {
         $eventData = TestResendEmailEvent::fromArray([
-            'original_payload' => ['test' => 'data'],
-            'type'             => 'email.sent',
+            'type' => 'email.sent',
         ]);
 
-        expect($eventData->originalPayload)->toBe(['test' => 'data']);
+        expect($eventData->originalPayload)->toHaveKey('data');
+        expect($eventData->originalPayload['type'])->toBe('email.sent');
     });
 });
