@@ -1,56 +1,42 @@
 # Laravel Email Webhooks Resend
 
-**Extension package to resend email webhook events in Laravel applications.**
-
-## Features
-
-- Resend email webhook events easily.
-- Built on top of `laravel-email-webhooks`.
-- Works with [Spatie Laravel Webhook Client](https://github.com/spatie/laravel-webhook-client).
-- Fully tested with Pest and Orchestra Testbench.
+Resend driver package for `misaf/laravel-email-webhooks` on Laravel 13.
 
 ## Requirements
 
-- PHP ^8.3
-- Laravel 10+
-- `misaf/laravel-email-webhooks` ^1.0.0
-- `spatie/laravel-webhook-client` ^3.4.3
+- PHP 8.4+
+- Laravel 13
+- `misaf/laravel-email-webhooks` 1.x
+- `spatie/laravel-webhook-client` 3.x
 
 ## Installation
 
 ```bash
 composer require misaf/laravel-email-webhooks-resend
-Usage
-Publish the service provider (if you need customization):
+```
 
-bash
-Copy code
-php artisan vendor:publish --provider="Misaf\EmailWebhooksResend\Providers\EmailWebhooksResendServiceProvider"
-Resend webhook events:
+The service provider is auto-discovered by Laravel and registers the `resend` email webhook driver.
 
-php
-Copy code
-use Misaf\EmailWebhooksResend\Facades\EmailWebhooksResend;
+## Usage
 
-EmailWebhooksResend::resend('event-name', $payload);
-Integrate with your webhook client:
+Process a Resend webhook payload through the shared facade:
 
-php
-Copy code
-use Spatie\WebhookClient\Models\WebhookCall;
+```php
+use Misaf\LaravelEmailWebhooks\Facades\EmailWebhooks;
 
-WebhookCall::create([
-    'name' => 'email_event',
-    'payload' => $payload,
-]);
-Testing
-The package uses Pest and Orchestra Testbench:
+$eventData = EmailWebhooks::driver('resend')->processEvent($payload);
+```
 
-bash
-Copy code
+When using Spatie Webhook Client, set the process job to:
+
+```php
+Misaf\LaravelEmailWebhooksResend\Jobs\Webhooks::class
+```
+
+The driver maps Resend payloads to `Misaf\LaravelEmailWebhooksResend\DTOs\ResendEvent` and dispatches the core package email events.
+
+## Testing
+
+```bash
 composer test
-Contributing
-All contributions are welcome. Feel free to submit pull requests or open issues.
-
-License
-This package is open-sourced under the MIT license.
+```

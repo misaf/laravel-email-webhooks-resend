@@ -2,29 +2,28 @@
 
 declare(strict_types=1);
 
-namespace Misaf\EmailWebhooksResend\Tests\Helpers;
+namespace Misaf\LaravelEmailWebhooksResend\Tests\Helpers;
 
 use Illuminate\Support\Facades\Event;
-use Misaf\EmailWebhooks\Events\EmailBouncedEvent;
-use Misaf\EmailWebhooks\Events\EmailComplainedEvent;
-use Misaf\EmailWebhooks\Events\EmailFailedEvent;
-use Misaf\EmailWebhooks\Events\EmailSentEvent;
-use Misaf\EmailWebhooksResend\DataTransferObjects\ResendEventDto;
+use Misaf\LaravelEmailWebhooks\Events\EmailBounced;
+use Misaf\LaravelEmailWebhooks\Events\EmailComplained;
+use Misaf\LaravelEmailWebhooks\Events\EmailFailed;
+use Misaf\LaravelEmailWebhooks\Events\EmailSent;
+use Misaf\LaravelEmailWebhooksResend\DTOs\ResendEvent;
 
 final class EventAssertionHelper
 {
     /**
      * Assert that a sent event was dispatched with correct data
      *
-     * @param array<string>|null $expectedRecipients
-     * @return void
+     * @param  array<string>|null  $expectedRecipients
      */
     public static function assertSentEventDispatched(?array $expectedRecipients = null): void
     {
-        Event::assertDispatched(EmailSentEvent::class, function (EmailSentEvent $event) use ($expectedRecipients) {
+        Event::assertDispatched(EmailSent::class, function (EmailSent $event) use ($expectedRecipients) {
             $eventData = $event->eventData;
 
-            if ( ! $eventData instanceof ResendEventDto) {
+            if ( ! $eventData instanceof ResendEvent) {
                 return false;
             }
 
@@ -38,21 +37,16 @@ final class EventAssertionHelper
 
     /**
      * Assert that a bounced event was dispatched with correct data
-     *
-     * @param string|null $expectedType
-     * @param string|null $expectedMessage
-     * @param string|null $expectedSubType
-     * @return void
      */
     public static function assertBouncedEventDispatched(
         ?string $expectedType = null,
         ?string $expectedMessage = null,
         ?string $expectedSubType = null,
     ): void {
-        Event::assertDispatched(EmailBouncedEvent::class, function (EmailBouncedEvent $event) use ($expectedType, $expectedMessage, $expectedSubType) {
+        Event::assertDispatched(EmailBounced::class, function (EmailBounced $event) use ($expectedType, $expectedMessage, $expectedSubType) {
             $eventData = $event->eventData;
 
-            if ( ! $eventData instanceof ResendEventDto) {
+            if ( ! $eventData instanceof ResendEvent) {
                 return false;
             }
 
@@ -69,31 +63,22 @@ final class EventAssertionHelper
                 return false;
             }
 
-            return ! (null !== $expectedSubType && $bounce->subType !== $expectedSubType)
-
-
-
-            ;
+            return ! (null !== $expectedSubType && $bounce->subType !== $expectedSubType);
         });
     }
 
     /**
      * Assert that a complained event was dispatched with correct data
-     *
-     * @param string|null $expectedType
-     * @param string|null $expectedMessage
-     * @param string|null $expectedSubType
-     * @return void
      */
     public static function assertComplainedEventDispatched(
         ?string $expectedType = null,
         ?string $expectedMessage = null,
         ?string $expectedSubType = null,
     ): void {
-        Event::assertDispatched(EmailComplainedEvent::class, function (EmailComplainedEvent $event) use ($expectedType, $expectedMessage, $expectedSubType) {
+        Event::assertDispatched(EmailComplained::class, function (EmailComplained $event) use ($expectedType, $expectedMessage, $expectedSubType) {
             $eventData = $event->eventData;
 
-            if ( ! $eventData instanceof ResendEventDto) {
+            if ( ! $eventData instanceof ResendEvent) {
                 return false;
             }
 
@@ -110,45 +95,35 @@ final class EventAssertionHelper
                 return false;
             }
 
-            return ! (null !== $expectedSubType && $bounce->subType !== $expectedSubType)
-
-
-
-            ;
+            return ! (null !== $expectedSubType && $bounce->subType !== $expectedSubType);
         });
     }
 
     /**
      * Assert that a failed event was dispatched with correct data
-     *
-     * @return void
      */
     public static function assertFailedEventDispatched(): void
     {
-        Event::assertDispatched(EmailFailedEvent::class, function (EmailFailedEvent $event) {
+        Event::assertDispatched(EmailFailed::class, function (EmailFailed $event) {
             $eventData = $event->eventData;
-            return $eventData instanceof ResendEventDto;
+
+            return $eventData instanceof ResendEvent;
         });
     }
 
     /**
      * Assert that no events were dispatched
-     *
-     * @return void
      */
     public static function assertNoEventsDispatched(): void
     {
-        Event::assertNotDispatched(EmailSentEvent::class);
-        Event::assertNotDispatched(EmailBouncedEvent::class);
-        Event::assertNotDispatched(EmailComplainedEvent::class);
-        Event::assertNotDispatched(EmailFailedEvent::class);
+        Event::assertNotDispatched(EmailSent::class);
+        Event::assertNotDispatched(EmailBounced::class);
+        Event::assertNotDispatched(EmailComplained::class);
+        Event::assertNotDispatched(EmailFailed::class);
     }
 
     /**
      * Assert that a specific event was not dispatched
-     *
-     * @param string $eventClass
-     * @return void
      */
     public static function assertEventNotDispatched(string $eventClass): void
     {
@@ -156,15 +131,12 @@ final class EventAssertionHelper
     }
 
     /**
-     * Assert that an event was dispatched with ResendEventDto
-     *
-     * @param string $eventClass
-     * @return void
+     * Assert that an event was dispatched with ResendEvent
      */
     public static function assertEventWithResendDto(string $eventClass): void
     {
         Event::assertDispatched($eventClass, function ($event) {
-            return $event->eventData instanceof ResendEventDto;
+            return $event->eventData instanceof ResendEvent;
         });
     }
 }

@@ -2,7 +2,6 @@
     "name": "misaf/laravel-email-webhooks-resend",
     "description": "Resend email webhook integration for Laravel.",
     "type": "library",
-    "version": "v1.0.0",
     "license": "MIT",
     "keywords": [
         "laravel",
@@ -20,26 +19,35 @@
     ],
     "require": {
         "php": "^8.3",
-        "misaf/laravel-email-webhooks": "^1.0.0",
-        "spatie/laravel-webhook-client": "^3.4.3"
+        "illuminate/support": "^13.0",
+        "misaf/laravel-email-webhooks": "dev-master"
     },
     "require-dev": {
-        "pestphp/pest": "^3.0",
-        "orchestra/testbench": "^9.0"
+        "laravel/pint": "^1.0",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-arch": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0",
+        "pestphp/pest-plugin-profanity": "^4.2.1",
+        "pestphp/pest-plugin-type-coverage": "^4.0.3",
+        "orchestra/testbench": "^11.0"
     },
     "scripts": {
         "test": "pest"
     },
     "autoload": {
         "psr-4": {
-            "Misaf\\EmailWebhooksResend\\": "src/",
-            "Misaf\\EmailWebhooksResend\\Tests\\": "tests/"
+            "Misaf\\LaravelEmailWebhooksResend\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Misaf\\LaravelEmailWebhooksResend\\Tests\\": "tests/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Misaf\\EmailWebhooksResend\\Providers\\EmailWebhooksResendServiceProvider"
+                "Misaf\\LaravelEmailWebhooksResend\\EmailWebhooksResendServiceProvider"
             ]
         }
     },

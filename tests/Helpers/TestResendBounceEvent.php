@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Misaf\EmailWebhooksResend\Tests\Helpers;
+namespace Misaf\LaravelEmailWebhooksResend\Tests\Helpers;
 
-use Misaf\EmailWebhooksResend\DataTransferObjects\ResendBounceEventDto;
+use Misaf\LaravelEmailWebhooksResend\DTOs\ResendBounceEvent;
 
-final class TestResendBounceEventDto extends ResendBounceEventDto
+final class TestResendBounceEvent extends ResendBounceEvent
 {
     /**
      * @param array{
@@ -14,11 +14,10 @@ final class TestResendBounceEventDto extends ResendBounceEventDto
      *   message?: string,
      *   subType?: string
      * } $data
-     * @return static
      */
     public static function fromArray(array $data): static
     {
-        return new static(
+        return new self(
             type: $data['type'] ?? 'Permanent',
             message: $data['message'] ?? 'Test bounce message',
             subType: $data['subType'] ?? 'General',

@@ -2,20 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Misaf\EmailWebhooksResend\Services;
+namespace Misaf\LaravelEmailWebhooksResend;
 
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
-use Misaf\EmailWebhooks\DataTransferObjects\EmailEventDto;
-use Misaf\EmailWebhooks\Services\EmailWebhooksDriver;
-use Misaf\EmailWebhooksResend\DataTransferObjects\ResendEventDto;
+use Misaf\LaravelEmailWebhooks\DTOs\BounceEvent;
+use Misaf\LaravelEmailWebhooks\DTOs\EmailEvent;
+use Misaf\LaravelEmailWebhooks\EmailWebhooksDriver;
+use Misaf\LaravelEmailWebhooksResend\DTOs\ResendEvent;
 
 final class ResendEmailWebhooksDriver extends EmailWebhooksDriver
 {
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      * @return array<string, mixed>
      */
     protected function validatePayload(array $payload): array
@@ -25,14 +26,14 @@ final class ResendEmailWebhooksDriver extends EmailWebhooksDriver
             'data.to'             => 'bail|required|array|min:1|max:100',
             'data.to.*'           => 'bail|required|email:rfc,strict,spoof,filter,filter_unicode|max:255',
             'data.from'           => 'bail|required|email:rfc,strict,spoof,filter,filter_unicode|max:255',
-            'data.bounce'         => 'bail|required_if:type,email.bounced,email.complained|nullable|array',
-            'data.bounce.type'    => 'bail|required_with:data.bounce|string|in:Permanent,Temporary',
+            'data.bounce'         => sprintf('bail|required_if:type,%s,%s|nullable|array', EmailEvent::TypeBounced, EmailEvent::TypeComplained),
+            'data.bounce.type'    => ['bail', 'required_with:data.bounce', 'string', Rule::in(BounceEvent::types())],
             'data.bounce.message' => 'bail|required_with:data.bounce|string|max:1000',
             'data.bounce.subType' => 'bail|required_with:data.bounce|string|max:255',
             'data.subject'        => 'bail|required|string|min:1|max:255',
             'data.email_id'       => 'bail|required|string|min:1',
             'data.created_at'     => 'bail|required|string|date',
-            'type'                => 'bail|required|string|in:email.sent,email.bounced,email.complained,email.failed',
+            'type'                => ['bail', 'required', 'string', Rule::in(EmailEvent::types())],
         ]);
 
         try {
@@ -60,20 +61,9 @@ final class ResendEmailWebhooksDriver extends EmailWebhooksDriver
      *   },
      *   type: string
      * } $payload
-     * @return EmailEventDto
      */
-    protected function createEventFromPayload(array $payload): EmailEventDto
+    protected function createEventFromPayload(array $payload): EmailEvent
     {
-        return ResendEventDto::fromArray($payload);
-    }
-
-    /**
-     * @return string
-     */
-    protected function getProviderName(): string
-    {
-        $provider = Config::string('services.email.webhooks.resend.webhook_name', 'resend');
-
-        return $provider;
+        return ResendEvent::fromArray($payload);
     }
 }
