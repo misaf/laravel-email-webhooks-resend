@@ -20,7 +20,7 @@
     "require": {
         "php": "^8.3",
         "illuminate/support": "^13.0",
-        "misaf/laravel-email-webhooks": "dev-master"
+        "misaf/laravel-email-webhooks": "^1.0@dev"
     },
     "require-dev": {
         "laravel/pint": "^1.0",
