@@ -2,15 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Misaf\EmailWebhooksResend\Tests\Helpers;
+namespace Misaf\LaravelEmailWebhooksResend\Tests\Helpers;
+
+use Misaf\LaravelEmailWebhooks\DTOs\BounceEvent;
+use Misaf\LaravelEmailWebhooks\DTOs\EmailEvent;
 
 final class ResendEventPayloadHelper
 {
     /**
      * Create a base Resend event payload
      *
-     * @param string $type
-     * @param array<string, mixed> $overrides
+     * @param  array<string, mixed>  $overrides
      * @return array<string, mixed>
      */
     public static function createPayload(string $type, array $overrides = []): array
@@ -39,25 +41,22 @@ final class ResendEventPayloadHelper
     /**
      * Create a sent event payload
      *
-     * @param array<string, mixed> $overrides
+     * @param  array<string, mixed>  $overrides
      * @return array<string, mixed>
      */
     public static function createSentPayload(array $overrides = []): array
     {
-        return self::createPayload('email.sent', $overrides);
+        return self::createPayload(EmailEvent::TypeSent, $overrides);
     }
 
     /**
      * Create a bounced event payload
      *
-     * @param string $type
-     * @param string $message
-     * @param string $subType
-     * @param array<string, mixed> $overrides
+     * @param  array<string, mixed>  $overrides
      * @return array<string, mixed>
      */
     public static function createBouncedPayload(
-        string $type = 'Permanent',
+        string $type = BounceEvent::TypePermanent,
         string $message = 'Email bounced',
         string $subType = 'General',
         array $overrides = [],
@@ -72,20 +71,17 @@ final class ResendEventPayloadHelper
             ],
         ];
 
-        return self::createPayload('email.bounced', array_merge_recursive($bounceData, $overrides));
+        return self::createPayload(EmailEvent::TypeBounced, array_merge_recursive($bounceData, $overrides));
     }
 
     /**
      * Create a complained event payload
      *
-     * @param string $type
-     * @param string $message
-     * @param string $subType
-     * @param array<string, mixed> $overrides
+     * @param  array<string, mixed>  $overrides
      * @return array<string, mixed>
      */
     public static function createComplainedPayload(
-        string $type = 'Permanent',
+        string $type = BounceEvent::TypePermanent,
         string $message = 'Email complained',
         string $subType = 'General',
         array $overrides = [],
@@ -100,26 +96,25 @@ final class ResendEventPayloadHelper
             ],
         ];
 
-        return self::createPayload('email.complained', array_merge_recursive($bounceData, $overrides));
+        return self::createPayload(EmailEvent::TypeComplained, array_merge_recursive($bounceData, $overrides));
     }
 
     /**
      * Create a failed event payload
      *
-     * @param array<string, mixed> $overrides
+     * @param  array<string, mixed>  $overrides
      * @return array<string, mixed>
      */
     public static function createFailedPayload(array $overrides = []): array
     {
-        return self::createPayload('email.failed', $overrides);
+        return self::createPayload(EmailEvent::TypeFailed, $overrides);
     }
 
     /**
      * Create a payload with multiple recipients
      *
-     * @param string $type
-     * @param array<string> $recipients
-     * @param array<string, mixed> $overrides
+     * @param  array<string>  $recipients
+     * @param  array<string, mixed>  $overrides
      * @return array<string, mixed>
      */
     public static function createMultiRecipientPayload(string $type, array $recipients, array $overrides = []): array
@@ -136,10 +131,9 @@ final class ResendEventPayloadHelper
     /**
      * Create a malformed payload (missing data key)
      *
-     * @param string $type
      * @return array<string, mixed>
      */
-    public static function createMalformedPayload(string $type = 'email.sent'): array
+    public static function createMalformedPayload(string $type = EmailEvent::TypeSent): array
     {
         return [
             'type' => $type,
@@ -150,7 +144,6 @@ final class ResendEventPayloadHelper
     /**
      * Create a payload missing bounce data for bounce/complaint events
      *
-     * @param string $type
      * @return array<string, mixed>
      */
     public static function createPayloadWithoutBounceData(string $type): array
