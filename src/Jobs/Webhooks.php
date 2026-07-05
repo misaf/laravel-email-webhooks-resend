@@ -13,15 +13,35 @@ final class Webhooks extends SpatieProcessWebhookJob
 {
     public function handle(): void
     {
+        $payload = $this->payload();
+
+        /** @var EmailWebhooksDriver $service */
+        $service = EmailWebhooks::driver('resend');
+
+        $service->processEvent($payload);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function payload(): array
+    {
         $payload = $this->webhookCall->payload;
 
         if ( ! is_array($payload)) {
             throw new InvalidArgumentException('Webhook payload must be an array');
         }
 
-        /** @var EmailWebhooksDriver $service */
-        $service = EmailWebhooks::driver('resend');
+        $stringKeyedPayload = [];
 
-        $service->processEvent($payload);
+        foreach ($payload as $key => $value) {
+            if ( ! is_string($key)) {
+                throw new InvalidArgumentException('Webhook payload must be an associative array');
+            }
+
+            $stringKeyedPayload[$key] = $value;
+        }
+
+        return $stringKeyedPayload;
     }
 }

@@ -6,6 +6,9 @@ namespace Misaf\LaravelEmailWebhooksResend\DTOs;
 
 use Misaf\LaravelEmailWebhooks\DTOs\EmailEvent;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 class ResendEvent extends EmailEvent
 {
     /**

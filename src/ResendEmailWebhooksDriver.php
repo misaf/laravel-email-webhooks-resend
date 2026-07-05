@@ -37,7 +37,7 @@ final class ResendEmailWebhooksDriver extends EmailWebhooksDriver
         ]);
 
         try {
-            return $validator->validate();
+            return self::stringKeyedArray($validator->validate());
         } catch (ValidationException $e) {
             throw new InvalidArgumentException(
                 'Invalid Resend webhook payload: ' . $e->getMessage(),
@@ -65,5 +65,24 @@ final class ResendEmailWebhooksDriver extends EmailWebhooksDriver
     protected function createEventFromPayload(array $payload): EmailEvent
     {
         return ResendEvent::fromArray($payload);
+    }
+
+    /**
+     * @param  array<array-key, mixed>  $payload
+     * @return array<string, mixed>
+     */
+    private static function stringKeyedArray(array $payload): array
+    {
+        $stringKeyedPayload = [];
+
+        foreach ($payload as $key => $value) {
+            if ( ! is_string($key)) {
+                throw new InvalidArgumentException('Validated Resend payload must be an associative array');
+            }
+
+            $stringKeyedPayload[$key] = $value;
+        }
+
+        return $stringKeyedPayload;
     }
 }
