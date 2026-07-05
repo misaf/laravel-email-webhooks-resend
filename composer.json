@@ -28,7 +28,10 @@
         "orchestra/testbench": "^9.0"
     },
     "scripts": {
-        "test": "pest"
+        "analyse": "vendor/bin/phpstan analyse",
+        "format": "vendor/bin/pint",
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage"
     },
     "autoload": {
         "psr-4": {

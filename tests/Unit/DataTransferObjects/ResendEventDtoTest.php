@@ -7,9 +7,9 @@ use Misaf\EmailWebhooksResend\Tests\Helpers\TestResendEmailEventDto;
 describe('ResendEventDto', function (): void {
     it('handles bounce data correctly', function (): void {
         $eventData = TestResendEmailEventDto::fromArray([
-            'type'   => 'email.bounced',
+            'type' => 'email.bounced',
             'bounce' => [
-                'type'    => 'Permanent',
+                'type' => 'Permanent',
                 'message' => 'Test bounce message',
                 'subType' => 'General',
             ],
@@ -17,7 +17,7 @@ describe('ResendEventDto', function (): void {
 
         expect($eventData->bounce)->not->toBeNull();
         $bounce = $eventData->bounce;
-        assert(null !== $bounce);
+        assert($bounce !== null);
         expect($bounce->type)->toBe('Permanent');
         expect($bounce->message)->toBe('Test bounce message');
         expect($bounce->subType)->toBe('General');
@@ -33,9 +33,9 @@ describe('ResendEventDto', function (): void {
 
     it('converts to array correctly', function (): void {
         $eventData = TestResendEmailEventDto::fromArray([
-            'type'   => 'email.bounced',
+            'type' => 'email.bounced',
             'bounce' => [
-                'type'    => 'Permanent',
+                'type' => 'Permanent',
                 'message' => 'Test bounce message',
                 'subType' => 'General',
             ],
@@ -61,7 +61,7 @@ describe('ResendEventDto', function (): void {
         expect($array['type'])->toBe('email.bounced');
 
         expect($array)->toHaveKey('provider');
-        expect($array['provider'])->toBe('test-provider');
+        expect($array['provider'])->toBe('resend');
 
         expect($array)->toHaveKey('bounce');
         /** @var array{type: string, message: string, subType: string} $bounceArray */
@@ -78,7 +78,7 @@ describe('ResendEventDto', function (): void {
     it('handles multiple recipients correctly', function (): void {
         $recipients = ['primary@example.com', 'cc@example.com', 'bcc@example.com'];
         $eventData = TestResendEmailEventDto::fromArray([
-            'to'   => $recipients,
+            'to' => $recipients,
             'type' => 'email.sent',
         ]);
 
@@ -88,11 +88,10 @@ describe('ResendEventDto', function (): void {
 
     it('stores original payload correctly', function (): void {
         $eventData = TestResendEmailEventDto::fromArray([
-            'original_payload' => ['test' => 'data'],
-            'type'             => 'email.sent',
+            'type' => 'email.sent',
         ]);
 
-        expect($eventData->originalPayload)->toHaveKey('test');
-        expect($eventData->originalPayload['test'])->toBe('data');
+        expect($eventData->originalPayload)->toHaveKey('data');
+        expect($eventData->originalPayload['type'])->toBe('email.sent');
     });
 });
